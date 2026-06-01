@@ -21,6 +21,12 @@ changelog/        双语修改日志
 Rscript scripts\infection_weekly_report_v1_0.R
 ```
 
+也可以使用根目录下生成的桌面程序：
+
+```text
+InfectionWeekly.exe
+```
+
 ## 输入文件
 
 请将以下两个 Excel 文件放入 `input_database/`，文件名需要保持不变：
@@ -87,6 +93,8 @@ install.packages(c("tidyverse", "readxl", "officer", "flextable"))
 Rscript scripts\infection_weekly_report_v1_0.R
 ```
 
+如果使用桌面程序，双击根目录下的 `InfectionWeekly.exe`。程序打开后会自动读取当前 `config/report_config.txt`，在界面中显示当前日期和疾病选择；也可以在界面中选择新的 A/B 文件、保存配置并生成报告。
+
 生成结果：
 
 ```text
@@ -126,6 +134,16 @@ outputs/table_beta.csv
 ## 维护约定
 
 输入数据和输出结果由 `.gitignore` 忽略，不提交到 GitHub。
+
+桌面程序源码放在 `desktop_app/`。构建 EXE：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File desktop_app\build_exe.ps1
+```
+
+生成的 `InfectionWeekly.exe` 位于根目录，但不提交到 Git。
+
+桌面程序使用 `python-calamine` 读取导出的 Excel 文件，以兼容部分 `openpyxl` 无法完整读取的本地工作簿。
 
 正式改动需要同步维护：
 

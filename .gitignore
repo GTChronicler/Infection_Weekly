@@ -1,6 +1,11 @@
 # Input data and generated outputs should stay local.
 input_database/*
 outputs/*
+InfectionWeekly.exe
+desktop_app/build/
+desktop_app/*.spec
+__pycache__/
+*.pyc
 
 # Keep directory placeholders tracked.
 !input_database/.gitkeep

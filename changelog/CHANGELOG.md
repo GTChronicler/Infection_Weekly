@@ -36,3 +36,6 @@
 
 ### 2026-06-02-03 Write Project README / 撰写项目 README
 - Added a root `README.md` covering project purpose, inputs, configuration, execution, outputs, report contents, common errors, and maintenance conventions; replaced the old A/B file note. / 新增根目录 `README.md`，说明项目用途、输入文件、配置方式、运行命令、输出结果、报告内容、常见错误和维护约定，并替代原来的 A/B 文件说明。
+
+### 2026-06-02-04 Build Standalone Windows GUI EXE / 构建独立 Windows 图形界面 EXE
+- Added a Python/Tkinter desktop application and PyInstaller build flow for generating `InfectionWeekly.exe`, using `python-calamine` for Excel compatibility while preserving the existing project folders, configuration file, input/output paths, and report content. / 新增 Python/Tkinter 桌面程序和 PyInstaller 构建流程，用于生成 `InfectionWeekly.exe`，并使用 `python-calamine` 兼容导出的 Excel 文件，同时保持现有项目目录、配置文件、输入输出路径和报告内容不变。
