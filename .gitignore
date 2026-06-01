@@ -1,0 +1,12 @@
+# Input data and generated outputs should stay local.
+input_database/*
+outputs/*
+
+# Keep directory placeholders tracked.
+!input_database/.gitkeep
+!outputs/.gitkeep
+
+# R session and editor-local files.
+.Rhistory
+.RData
+.Ruserdata/
