@@ -33,3 +33,6 @@
 
 ### 2026-06-02-02 Harden Report Config Validation / 加强报告配置校验
 - Added strict validation for `date_Mon`, duplicate disease names, disease-data matching, and bilingual UTF-8-related mismatch guidance in `config/report_config.txt`. / 为 `config/report_config.txt` 增加 `date_Mon` 严格日期校验、重复疾病校验、疾病数据匹配校验，以及 UTF-8 编码相关的中英文双语友好提示。
+
+### 2026-06-02-03 Write Project README / 撰写项目 README
+- Added a root `README.md` covering project purpose, inputs, configuration, execution, outputs, report contents, common errors, and maintenance conventions; replaced the old A/B file note. / 新增根目录 `README.md`，说明项目用途、输入文件、配置方式、运行命令、输出结果、报告内容、常见错误和维护约定，并替代原来的 A/B 文件说明。
