@@ -220,10 +220,10 @@ DISEASES <- function(v, df_1, df_2) {
 }
 
 # ------------------------ INPUT ---------------------------------
-df_age <- read_excel("A.xlsx", skip = 1) %>% as_tibble()
-df_raw <- read_excel("B.xlsx", skip = 1) %>% as_tibble()
+df_age <- read_excel("input_database/A.xlsx", skip = 1) %>% as_tibble()
+df_raw <- read_excel("input_database/B.xlsx", skip = 1) %>% as_tibble()
 df_dict <- read.csv(
-  "dictionary.csv",
+  "config/dictionary.csv",
   stringsAsFactors = FALSE,
   fileEncoding = "GBK"
 )
@@ -443,5 +443,5 @@ output <- output %>%
   )
 
 # ------------------------ OUTPUT --------------------------------
-output %>% print("output_beta.docx")
-write.csv(table, "table_beta.csv", row.names = FALSE, fileEncoding = "GBK")
+output %>% print("outputs/output_beta.docx")
+write.csv(table, "outputs/table_beta.csv", row.names = FALSE, fileEncoding = "GBK")
