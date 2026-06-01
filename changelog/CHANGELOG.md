@@ -12,3 +12,6 @@
 - Updated `scripts/main_v0_2.R` to read inputs from `input_database/` and `config/`. / 更新 `scripts/main_v0_2.R`，从 `input_database/` 和 `config/` 读取输入文件。
 - Updated generated report and table outputs to write into `outputs/`. / 更新输出路径，将生成的报告和表格写入 `outputs/`。
 - Verified the script runs successfully from the project root with `Rscript scripts/main_v0_2.R`. / 已验证脚本可在项目根目录通过 `Rscript scripts/main_v0_2.R` 成功运行。
+
+### Fix weekly trend percentage display / 修复周趋势百分比显示
+- Added the missing percent sign in the health guidance sentence for week-over-week incidence change. / 补充健康提示段落中法定传染病发病数较上周变化值缺失的百分号。
