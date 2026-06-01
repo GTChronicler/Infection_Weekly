@@ -25,3 +25,8 @@
 
 ### 2026-06-01-02 Add Other Infectious Diseases to Focus Section / 在重点疫情中新增其他传染病小节
 - Added an `其他传染病` subsection at the end of the focus section, listing non-zero rows from `B.xlsx` extra rows by current case count, with each disease sentence in its own paragraph. / 在“重点疫情”末尾新增 `其他传染病` 小节，按本期发病数列出 `B.xlsx` 附加行中本期非 0 的项目，并将每个病种句子单独成段。
+
+## 2026-06-02
+
+### 2026-06-02-01 Rename Main Script to Version 1.0 / 将主脚本重命名为 1.0 版
+- Renamed the main script from `scripts/main_v0_2.R` to `scripts/infection_weekly_report_v1_0.R` without changing runtime logic. / 将主脚本从 `scripts/main_v0_2.R` 重命名为 `scripts/infection_weekly_report_v1_0.R`，不修改运行逻辑。
