@@ -176,6 +176,30 @@ RATEDISEASES <- function(v, df) {
   return(t)
 }
 
+OTHERDISEASES <- function(df) {
+  df <- df %>%
+    mutate(
+      row_id = row_number(),
+      疾病病种 = str_remove_all(疾病病种, " ")
+    ) %>%
+    filter(本期发病数 != 0) %>%
+    arrange(-本期发病数, row_id) %>%
+    mutate(
+      sen = sprintf(
+        "%s%d例，较上周（%d例）%s，本年度累计报告%d例，较去年同期（%d例）%s。",
+        疾病病种,
+        本期发病数,
+        上期发病数,
+        RATECALC(本期发病数, 上期发病数),
+        本年至本期累计发病数,
+        去年至本期累计发病数,
+        RATECALC(本年至本期累计发病数, 去年至本期累计发病数)
+      )
+    )
+
+  return(df)
+}
+
 MERGETIER <- function(t, df_1, df_2) {
   df_1 <- df_1 %>% filter(tier == t)
   df_2 <- df_2 %>% filter(tier == t)
@@ -347,7 +371,7 @@ df_age <- df_age %>%
   select(-contains(df_dict %>% filter(tier == "N") %>% pull(疾病病种)))
 
 dict_num <- tibble(
-  order = 1:10,
+  order = 1:11,
   label = c(
     "（一）",
     "（二）",
@@ -358,7 +382,8 @@ dict_num <- tibble(
     "（七）",
     "（八）",
     "（九）",
-    "（十）"
+    "（十）",
+    "（十一）"
   )
 )
 
@@ -377,6 +402,25 @@ sens_2 <- intst_2 %>%
     sen = sprintf("%s%d。%s%s", sen_1, order, sen_2, sen_3)
   ) %>%
   select(title, sen)
+
+sens_other <- OTHERDISEASES(df_raw_extra)
+if (nrow(sens_other) > 0) {
+  other_order <- nrow(sens_2) + 1
+  other_label <- dict_num %>%
+    filter(order == other_order) %>%
+    pull(label)
+  if (length(other_label) == 0) {
+    stop(sprintf("Missing section label for order %d.", other_order))
+  }
+
+  sens_2 <- sens_2 %>%
+    bind_rows(
+      tibble(
+        title = paste0(other_label, "其他传染病"),
+        sen = paste0(sens_other[["sen"]], collapse = "\n")
+      )
+    )
+}
 
 # ------------------------ PART III ------------------------------
 r <- (df_raw[[2]][[1]] - df_raw[[3]][[1]]) / df_raw[[3]][[1]] * 100
@@ -458,12 +502,16 @@ for (i in 1:nrow(sens_2)) {
       fpar(
         sens_2[i, ][[1]]
       )
-    ) %>%
-    body_add_fpar(
-      fpar(
-        sens_2[i, ][[2]]
-      )
     )
+
+  for (sen_line in str_split(sens_2[i, ][[2]], "\n")[[1]]) {
+    output <- output %>%
+      body_add_fpar(
+        fpar(
+          sen_line
+        )
+      )
+  }
 }
 
 output <- output %>%

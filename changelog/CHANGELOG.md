@@ -22,3 +22,6 @@
 ### 2026-06-01-01 Move DEFAULT Parameters to Plain Text Config / 外置 DEFAULT 参数到纯文本配置
 - Moved the report date and disease list parameters from `scripts/main_v0_2.R` to `config/report_config.txt`. / 将报告日期和疾病列表参数从 `scripts/main_v0_2.R` 外置到 `config/report_config.txt`。
 - Started archiving implementation plans in `plans/` with `YYYY-MM-DD-NN` tracking IDs. / 开始在 `plans/` 中保存实施计划，并使用 `YYYY-MM-DD-NN` 编号进行追踪。
+
+### 2026-06-01-02 Add Other Infectious Diseases to Focus Section / 在重点疫情中新增其他传染病小节
+- Added an `其他传染病` subsection at the end of the focus section, listing non-zero rows from `B.xlsx` extra rows by current case count, with each disease sentence in its own paragraph. / 在“重点疫情”末尾新增 `其他传染病` 小节，按本期发病数列出 `B.xlsx` 附加行中本期非 0 的项目，并将每个病种句子单独成段。
