@@ -677,17 +677,43 @@ def generate_report(root: Path | None = None) -> ReportResult:
 
 def write_docx(path: Path, paragraphs: list[str]) -> None:
     document = Document()
+    _set_document_fonts(document)
     for paragraph in paragraphs:
+        doc_paragraph = document.add_paragraph()
         if paragraph == "\n":
-            doc_paragraph = document.add_paragraph()
             run = doc_paragraph.add_run()
             text = OxmlElement("w:t")
             text.set(qn("xml:space"), "preserve")
             text.text = "\n"
             run._r.append(text)
         else:
-            document.add_paragraph(paragraph)
+            run = doc_paragraph.add_run(paragraph)
+        _set_run_fonts(run)
     document.save(path)
+
+
+def _set_document_fonts(document: Document) -> None:
+    style = document.styles["Normal"]
+    style.font.name = "Times New Roman"
+    r_pr = style.element.get_or_add_rPr()
+    _set_rfonts(r_pr)
+
+
+def _set_run_fonts(run: Any) -> None:
+    run.font.name = "Times New Roman"
+    r_pr = run._element.get_or_add_rPr()
+    _set_rfonts(r_pr)
+
+
+def _set_rfonts(r_pr: Any) -> None:
+    r_fonts = r_pr.find(qn("w:rFonts"))
+    if r_fonts is None:
+        r_fonts = OxmlElement("w:rFonts")
+        r_pr.insert(0, r_fonts)
+    r_fonts.set(qn("w:ascii"), "Times New Roman")
+    r_fonts.set(qn("w:hAnsi"), "Times New Roman")
+    r_fonts.set(qn("w:cs"), "Times New Roman")
+    r_fonts.set(qn("w:eastAsia"), "宋体")
 
 
 def write_table_csv(path: Path, table_rows: list[list[Any]]) -> None:

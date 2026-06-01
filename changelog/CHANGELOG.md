@@ -39,3 +39,7 @@
 
 ### 2026-06-02-04 Build Standalone Windows GUI EXE / 构建独立 Windows 图形界面 EXE
 - Added a Python/Tkinter desktop application and PyInstaller build flow for generating `InfectionWeekly.exe`, using `python-calamine` for Excel compatibility while preserving the existing project folders, configuration file, input/output paths, and report content. / 新增 Python/Tkinter 桌面程序和 PyInstaller 构建流程，用于生成 `InfectionWeekly.exe`，并使用 `python-calamine` 兼容导出的 Excel 文件，同时保持现有项目目录、配置文件、输入输出路径和报告内容不变。
+
+### 2026-06-02-05 Polish Word Fonts and 4K DPI UI / 优化 Word 字体和 4K 界面清晰度
+- Set generated Word report text to use SimSun for Chinese and Times New Roman for English in both the R reference script and the standalone EXE path. / 在 R 参考脚本和独立 EXE 生成路径中，将生成的 Word 报告文本设置为中文宋体、英文 Times New Roman。
+- Enabled Windows DPI awareness and Tk scaling for the desktop UI to improve clarity on 4K/high-DPI displays. / 为桌面界面启用 Windows DPI 感知和 Tk 缩放，以改善 4K/高 DPI 屏幕下的显示清晰度。

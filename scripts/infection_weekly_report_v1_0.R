@@ -555,29 +555,40 @@ table <- table %>%
   bind_rows(table)
 
 # ------------------------ FORMAT --------------------------------
+report_text_prop <- fp_text(
+  font.family = "Times New Roman",
+  cs.family = "Times New Roman",
+  eastasia.family = "宋体",
+  hansi.family = "Times New Roman"
+)
+
+REPORTFPAR <- function(text) {
+  fpar(ftext(text, prop = report_text_prop))
+}
+
 output <- read_docx() %>%
   body_add_fpar(
-    fpar(
+    REPORTFPAR(
       "一、疫情概况"
     )
   ) %>%
   body_add_fpar(
-    fpar(
+    REPORTFPAR(
       p1_1
     )
   ) %>%
   body_add_fpar(
-    fpar(
+    REPORTFPAR(
       p1_2
     )
   ) %>%
   body_add_fpar(
-    fpar(
+    REPORTFPAR(
       "\n"
     )
   ) %>%
   body_add_fpar(
-    fpar(
+    REPORTFPAR(
       "二、重点疫情"
     )
   )
@@ -585,7 +596,7 @@ output <- read_docx() %>%
 for (i in 1:nrow(sens_2)) {
   output <- output %>%
     body_add_fpar(
-      fpar(
+      REPORTFPAR(
         sens_2[i, ][[1]]
       )
     )
@@ -593,7 +604,7 @@ for (i in 1:nrow(sens_2)) {
   for (sen_line in str_split(sens_2[i, ][[2]], "\n")[[1]]) {
     output <- output %>%
       body_add_fpar(
-        fpar(
+        REPORTFPAR(
           sen_line
         )
       )
@@ -602,17 +613,17 @@ for (i in 1:nrow(sens_2)) {
 
 output <- output %>%
   body_add_fpar(
-    fpar(
+    REPORTFPAR(
       "\n"
     )
   ) %>%
   body_add_fpar(
-    fpar(
+    REPORTFPAR(
       "三、重点疫情健康提示"
     )
   ) %>%
   body_add_fpar(
-    fpar(
+    REPORTFPAR(
       p3_1
     )
   )

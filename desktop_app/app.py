@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import ctypes
 import shutil
 import sys
 import traceback
 from pathlib import Path
 from tkinter import END, BOTH, LEFT, RIGHT, VERTICAL, Y, filedialog, messagebox
 import tkinter as tk
+import tkinter.font as tkfont
 from tkinter import ttk
 import os
 
@@ -20,11 +22,27 @@ from infection_weekly_engine import (
 )
 
 
+def enable_dpi_awareness() -> None:
+    if sys.platform != "win32":
+        return
+    try:
+        ctypes.windll.shcore.SetProcessDpiAwareness(2)
+        return
+    except Exception:
+        pass
+    try:
+        ctypes.windll.user32.SetProcessDPIAware()
+    except Exception:
+        pass
+
+
 class InfectionWeeklyApp(tk.Tk):
     def __init__(self) -> None:
+        enable_dpi_awareness()
         super().__init__()
+        self._configure_dpi_scaling()
         self.title("Infection Weekly")
-        self.geometry("980x680")
+        self.geometry(self._initial_geometry())
         self.minsize(900, 600)
         self.root_dir = project_root()
         self.date_var = tk.StringVar()
@@ -35,6 +53,33 @@ class InfectionWeeklyApp(tk.Tk):
 
         self._build_ui()
         self.load_config_to_ui()
+
+    def _configure_dpi_scaling(self) -> None:
+        try:
+            scaling = max(1.0, self.winfo_fpixels("1i") / 72)
+            self.tk.call("tk", "scaling", scaling)
+        except tk.TclError:
+            pass
+
+        for font_name in (
+            "TkDefaultFont",
+            "TkTextFont",
+            "TkMenuFont",
+            "TkHeadingFont",
+            "TkCaptionFont",
+            "TkSmallCaptionFont",
+            "TkIconFont",
+            "TkTooltipFont",
+        ):
+            try:
+                tkfont.nametofont(font_name).configure(family="Microsoft YaHei UI", size=10)
+            except tk.TclError:
+                continue
+
+    def _initial_geometry(self) -> str:
+        width = min(max(980, int(self.winfo_screenwidth() * 0.42)), 1280)
+        height = min(max(680, int(self.winfo_screenheight() * 0.55)), 900)
+        return f"{width}x{height}"
 
     def _build_ui(self) -> None:
         container = ttk.Frame(self, padding=12)
