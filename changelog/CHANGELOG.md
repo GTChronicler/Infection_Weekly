@@ -30,3 +30,6 @@
 
 ### 2026-06-02-01 Rename Main Script to Version 1.0 / 将主脚本重命名为 1.0 版
 - Renamed the main script from `scripts/main_v0_2.R` to `scripts/infection_weekly_report_v1_0.R` without changing runtime logic. / 将主脚本从 `scripts/main_v0_2.R` 重命名为 `scripts/infection_weekly_report_v1_0.R`，不修改运行逻辑。
+
+### 2026-06-02-02 Harden Report Config Validation / 加强报告配置校验
+- Added strict validation for `date_Mon`, duplicate disease names, disease-data matching, and bilingual UTF-8-related mismatch guidance in `config/report_config.txt`. / 为 `config/report_config.txt` 增加 `date_Mon` 严格日期校验、重复疾病校验、疾病数据匹配校验，以及 UTF-8 编码相关的中英文双语友好提示。

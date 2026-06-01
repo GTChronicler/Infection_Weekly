@@ -31,33 +31,117 @@ READREPORTCONFIG <- function(path) {
     }
 
     if (is.null(section)) {
-      stop(sprintf("Config line is outside any section: %s", line))
+      stop(sprintf(
+        "配置行未放在任何 section 下 / Config line is outside any section: %s",
+        line
+      ))
     }
 
     if (section == "settings") {
       key_value <- str_split_fixed(line, "=", 2)
       if (key_value[[2]] == "") {
-        stop(sprintf("Invalid settings line: %s", line))
+        stop(sprintf(
+          "配置项格式无效 / Invalid settings line: %s",
+          line
+        ))
       }
       config$settings[[trimws(key_value[[1]])]] <- trimws(key_value[[2]])
     } else if (section %in% c("overview_diseases", "focus_diseases")) {
       config[[section]] <- c(config[[section]], line)
     } else {
-      stop(sprintf("Unknown config section: %s", section))
+      stop(sprintf(
+        "未知配置 section / Unknown config section: %s",
+        section
+      ))
     }
   }
 
   if (is.null(config$settings$date_Mon)) {
-    stop("Missing date_Mon in [settings].")
+    stop("缺少 [settings] 中的 date_Mon / Missing date_Mon in [settings].")
+  }
+  if (!str_detect(config$settings$date_Mon, "^\\d{8}$")) {
+    stop("date_Mon 格式无效，请使用 YYYYMMDD，例如 20260518 / Invalid date_Mon in [settings]. Use YYYYMMDD, for example 20260518.")
+  }
+  parsed_date <- as.Date(config$settings$date_Mon, format = "%Y%m%d")
+  if (is.na(parsed_date) || format(parsed_date, "%Y%m%d") != config$settings$date_Mon) {
+    stop("date_Mon 不是一个真实日期 / Invalid date_Mon in [settings]. The date must be a real calendar date.")
   }
   if (length(config$overview_diseases) == 0) {
-    stop("Missing diseases in [overview_diseases].")
+    stop("缺少 [overview_diseases] 中的疾病列表 / Missing diseases in [overview_diseases].")
   }
   if (length(config$focus_diseases) == 0) {
-    stop("Missing diseases in [focus_diseases].")
+    stop("缺少 [focus_diseases] 中的疾病列表 / Missing diseases in [focus_diseases].")
   }
 
   return(config)
+}
+
+CHECKDUPLICATES <- function(values, section) {
+  duplicated_values <- unique(values[duplicated(values)])
+  if (length(duplicated_values) > 0) {
+    stop(sprintf(
+      "[%s] 中有重复疾病名称 / Duplicate disease names in [%s]: %s.",
+      section,
+      section,
+      paste0(duplicated_values, collapse = "、")
+    ))
+  }
+}
+
+CHECKCONFIGDISEASES <- function(config, df_dict, df_all, df_age) {
+  encoding_note <- " 请检查疾病名称拼写，并确认 config/report_config.txt 保存为 UTF-8 编码 / Please check disease spelling and make sure config/report_config.txt is saved as UTF-8."
+
+  CHECKDUPLICATES(config$overview_diseases, "overview_diseases")
+  CHECKDUPLICATES(config$focus_diseases, "focus_diseases")
+
+  missing_overview_dict <- setdiff(config$overview_diseases, df_dict$diseases)
+  if (length(missing_overview_dict) > 0) {
+    stop(sprintf(
+      "[overview_diseases] 中存在未知疾病名称 / Unknown disease names in [overview_diseases]: %s.%s",
+      paste0(missing_overview_dict, collapse = "、"),
+      encoding_note
+    ))
+  }
+
+  missing_overview_data <- setdiff(config$overview_diseases, df_all$diseases)
+  if (length(missing_overview_data) > 0) {
+    stop(sprintf(
+      "[overview_diseases] 中的疾病未出现在 B.xlsx 主分析数据中 / Disease names in [overview_diseases] are not available in the main B.xlsx analysis data: %s.%s",
+      paste0(missing_overview_data, collapse = "、"),
+      encoding_note
+    ))
+  }
+
+  missing_focus_data <- setdiff(config$focus_diseases, df_all$diseases)
+  if (length(missing_focus_data) > 0) {
+    stop(sprintf(
+      "[focus_diseases] 中的疾病未出现在 B.xlsx 主分析数据中 / Disease names in [focus_diseases] are not available in the main B.xlsx analysis data: %s.%s",
+      paste0(missing_focus_data, collapse = "、"),
+      encoding_note
+    ))
+  }
+
+  focus_dict <- df_dict %>%
+    filter(diseases %in% config$focus_diseases)
+  missing_focus_dict <- setdiff(config$focus_diseases, focus_dict$diseases)
+  if (length(missing_focus_dict) > 0) {
+    stop(sprintf(
+      "[focus_diseases] 中存在未知疾病名称 / Unknown disease names in [focus_diseases]: %s.%s",
+      paste0(missing_focus_dict, collapse = "、"),
+      encoding_note
+    ))
+  }
+
+  missing_focus_age <- focus_dict %>%
+    filter(!map_lgl(疾病病种, ~ any(str_detect(colnames(df_age), fixed(.x))))) %>%
+    pull(diseases)
+  if (length(missing_focus_age) > 0) {
+    stop(sprintf(
+      "[focus_diseases] 中的疾病未出现在 A.xlsx 年龄数据中 / Disease names in [focus_diseases] are not available in A.xlsx age data: %s.%s",
+      paste0(missing_focus_age, collapse = "、"),
+      encoding_note
+    ))
+  }
 }
 
 report_config <- READREPORTCONFIG("config/report_config.txt")
@@ -306,6 +390,12 @@ df_all <- df_raw %>%
   left_join(df_dict) %>%
   filter(tier %in% c("甲类", "乙类", "丙类"))
 
+colnames(df_age) <- colnames(df_age) %>% str_remove_all(" ")
+df_age <- df_age %>%
+  select(-contains(df_dict %>% filter(tier == "N") %>% pull(疾病病种)))
+
+CHECKCONFIGDISEASES(report_config, df_dict, df_all, df_age)
+
 # ------------------------ PART I --------------------------------
 count_all <- df_all %>% pull(本期发病数) %>% sum()
 class_all <- (df_all %>% pull(本期发病数) != 0) %>% sum()
@@ -366,10 +456,6 @@ p1_2 <- list("甲类", "乙类", "丙类") %>%
   paste0(collapse = "")
 
 # ------------------------ PART II -------------------------------
-colnames(df_age) <- colnames(df_age) %>% str_remove_all(" ")
-df_age <- df_age %>%
-  select(-contains(df_dict %>% filter(tier == "N") %>% pull(疾病病种)))
-
 dict_num <- tibble(
   order = 1:11,
   label = c(
