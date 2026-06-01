@@ -15,3 +15,10 @@
 
 ### Fix weekly trend percentage display / 修复周趋势百分比显示
 - Added the missing percent sign in the health guidance sentence for week-over-week incidence change. / 补充健康提示段落中法定传染病发病数较上周变化值缺失的百分号。
+
+### Separate extra rows from analysis table B / 分离 B 表中的附加行
+- Stored `其他传染病` and all following rows from `B.xlsx` in `df_raw_extra`, while keeping the main analysis workflow on the preceding rows. / 将 `B.xlsx` 中 `其他传染病` 及其之后的所有行暂存到 `df_raw_extra`，主分析流程仅使用其之前的行。
+
+### 2026-06-01-01 Move DEFAULT Parameters to Plain Text Config / 外置 DEFAULT 参数到纯文本配置
+- Moved the report date and disease list parameters from `scripts/main_v0_2.R` to `config/report_config.txt`. / 将报告日期和疾病列表参数从 `scripts/main_v0_2.R` 外置到 `config/report_config.txt`。
+- Started archiving implementation plans in `plans/` with `YYYY-MM-DD-NN` tracking IDs. / 开始在 `plans/` 中保存实施计划，并使用 `YYYY-MM-DD-NN` 编号进行追踪。

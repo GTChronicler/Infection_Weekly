@@ -11,26 +11,59 @@ library(officer)
 library(flextable)
 
 # ------------------------ DEFAULT -------------------------------
-date_Mon <- c("20260518") # 输入此次周报所描述周的周一日期
+READREPORTCONFIG <- function(path) {
+  lines <- readLines(path, encoding = "UTF-8", warn = FALSE)
+  lines <- str_replace(lines, "^\ufeff", "")
+  lines <- trimws(lines)
+  lines <- lines[lines != "" & !str_detect(lines, "^#")]
 
-intst_1 <- list(
-  # 输入“疫情概况”章节想要分析的疾病
-  "新型冠状病毒感染",
-  "流行性感冒",
-  "其他感染性腹泻病",
-  "手足口病",
-  "痢疾",
-  "猩红热",
-  "猴痘"
-)
+  config <- list(
+    settings = list(),
+    overview_diseases = character(),
+    focus_diseases = character()
+  )
+  section <- NULL
 
-intst_2 <- list(
-  # 输入“重点疫情”章节想要分析的疾病
-  "新型冠状病毒感染",
-  "流行性感冒",
-  "其他感染性腹泻病",
-  "手足口病"
-)
+  for (line in lines) {
+    if (str_detect(line, "^\\[[^]]+\\]$")) {
+      section <- str_replace_all(line, "^\\[|\\]$", "")
+      next
+    }
+
+    if (is.null(section)) {
+      stop(sprintf("Config line is outside any section: %s", line))
+    }
+
+    if (section == "settings") {
+      key_value <- str_split_fixed(line, "=", 2)
+      if (key_value[[2]] == "") {
+        stop(sprintf("Invalid settings line: %s", line))
+      }
+      config$settings[[trimws(key_value[[1]])]] <- trimws(key_value[[2]])
+    } else if (section %in% c("overview_diseases", "focus_diseases")) {
+      config[[section]] <- c(config[[section]], line)
+    } else {
+      stop(sprintf("Unknown config section: %s", section))
+    }
+  }
+
+  if (is.null(config$settings$date_Mon)) {
+    stop("Missing date_Mon in [settings].")
+  }
+  if (length(config$overview_diseases) == 0) {
+    stop("Missing diseases in [overview_diseases].")
+  }
+  if (length(config$focus_diseases) == 0) {
+    stop("Missing diseases in [focus_diseases].")
+  }
+
+  return(config)
+}
+
+report_config <- READREPORTCONFIG("config/report_config.txt")
+date_Mon <- report_config$settings$date_Mon
+intst_1 <- report_config$overview_diseases
+intst_2 <- report_config$focus_diseases
 
 # ------------------------ FUNCTIONS -----------------------------
 RATECALC <- function(l, f) {
@@ -227,6 +260,14 @@ df_dict <- read.csv(
   stringsAsFactors = FALSE,
   fileEncoding = "GBK"
 )
+
+df_raw_extra <- df_raw[0, ]
+other_start <- which(str_remove_all(df_raw[[1]], " ") == "其他传染病")
+if (length(other_start) > 0) {
+  other_start <- other_start[[1]]
+  df_raw_extra <- df_raw[other_start:nrow(df_raw), ]
+  df_raw <- df_raw[seq_len(other_start - 1), ]
+}
 
 # ------------------------ RESHAPE -------------------------------
 date_Mon <- date_Mon %>% ymd()

@@ -1,0 +1,30 @@
+﻿# Infection Weekly report configuration
+# 周报参数配置文件。请使用记事本、VS Code、Positron 等纯文本编辑器修改，不建议用 Excel 打开或保存。
+# 空行和以 # 开头的说明行会被脚本忽略。
+#
+# [settings]
+# date_Mon 使用 YYYYMMDD 格式，填写本次周报所描述周的周一日期。
+#
+# [overview_diseases]
+# 填写“一、疫情概况”章节中需要点名比较的疾病。每行一个疾病名称，名称需与 config/dictionary.csv 中的 diseases 一致。
+#
+# [focus_diseases]
+# 填写“二、重点疫情”章节中需要展开分析的疾病。每行一个疾病名称，名称需同时能在 A.xlsx 和 B.xlsx 中匹配。
+
+[settings]
+date_Mon=20260518
+
+[overview_diseases]
+新型冠状病毒感染
+流行性感冒
+其他感染性腹泻病
+手足口病
+痢疾
+猩红热
+猴痘
+
+[focus_diseases]
+新型冠状病毒感染
+流行性感冒
+其他感染性腹泻病
+手足口病
