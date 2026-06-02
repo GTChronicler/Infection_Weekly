@@ -1,8 +1,44 @@
+<div align="center">
+
 # Infection Weekly
 
-传染病周报自动生成项目。脚本会读取本地输入数据库 `A.xlsx` 和 `B.xlsx`，结合配置文件和疾病字典，生成 Word 周报和 CSV 附表。
+**传染病周报自动生成工具**
+
+可通过桌面程序或 R 脚本读取 `A.xlsx` / `B.xlsx`，结合配置文件和疾病字典，生成 Word 周报和 CSV 附表。
+
+![R script](https://img.shields.io/badge/R-script-276DC3?logo=r&logoColor=white)
+![Windows EXE](https://img.shields.io/badge/Windows-EXE-0078D4?logo=windows&logoColor=white)
+![Word + CSV](https://img.shields.io/badge/output-Word%20%2B%20CSV-2E7D32)
+![UTF-8 config](https://img.shields.io/badge/config-UTF--8-4B5563)
+![Local data only](https://img.shields.io/badge/data-local%20only-F59E0B)
+
+[桌面程序](#桌面程序推荐) · [输入文件](#输入文件) · [配置文件](#配置文件) · [运行方法](#运行方法) · [常见问题](#常见问题)
+
+</div>
 
 本仓库只保存脚本、配置模板、字典和维护记录；真实输入数据和生成结果默认保留在本地，不提交到 GitHub。
+
+## 桌面程序（推荐）
+
+日常使用建议直接双击根目录下的 `InfectionWeekly.exe`：
+
+1. 在桌面程序中选择或放入本次周报使用的 `A.xlsx` 和 `B.xlsx`。
+2. 在桌面程序中查看、修改并保存当前配置。
+3. 点击生成报告，得到 Word 周报和 CSV 附表。
+
+桌面程序会读取并维护现有的 `config/report_config.txt`，生成结果写入 `outputs/`。
+
+## 命令行 / R 脚本备用方式
+
+如果需要维护脚本、排查问题，或不使用桌面程序，也可以手动运行 R 脚本：
+
+1. 将 `A.xlsx` 和 `B.xlsx` 放入 `input_database/`。
+2. 修改 `config/report_config.txt`。
+3. 从项目根目录运行：
+
+```powershell
+Rscript scripts\infection_weekly_report_v1_0.R
+```
 
 ## 项目结构
 
@@ -13,18 +49,6 @@ outputs/          本地生成结果，不提交
 scripts/          R 主脚本
 plans/            已实施计划档案
 changelog/        双语修改日志
-```
-
-主脚本：
-
-```powershell
-Rscript scripts\infection_weekly_report_v1_0.R
-```
-
-也可以使用根目录下生成的桌面程序：
-
-```text
-InfectionWeekly.exe
 ```
 
 ## 输入文件
